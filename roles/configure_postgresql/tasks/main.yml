@@ -1,0 +1,58 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: Ensure PostgreSQL is listening on all interfaces
+  lineinfile:
+    dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp='^#?listen_addresses\s*='
+    line="listen_addresses = '*'"
+    state=present
+  notify: restart postgresql
+
+- name: Set default client_encoding
+  lineinfile:
+    dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp='^#?client_encoding\s*='
+    line="client_encoding = utf8"
+    state=present
+  notify: restart postgresql
+
+- name: Allow connection on all intefraces
+  lineinfile:
+    dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+    regexp='host\s+all\s+all\s+127.0.0.1/32\s+ident'
+    line='host all all all md5'
+    insertbefore=BOF
+  notify: restart postgresql
+
+- name: Create graphite db
+  postgresql_db: name={{ postgresql_graphite_db_name }}
+  become: yes
+  become_user: postgres
+
+- name: Create grafana db
+  postgresql_db: name={{ postgresql_grafana_db_name }}
+  become: yes
+  become_user: postgres
+
+- name: Ensure user has access to the graphite database
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db={{ postgresql_graphite_db_name }}
+    name={{ postgresql_db_user_name }}
+    password={{ postgresql_db_password }}
+    priv=ALL
+    state=present
+
+- name: Ensure user has access to the grafana database
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db={{ postgresql_grafana_db_name }}
+    name={{ postgresql_db_user_name }}
+    password={{ postgresql_db_password }}
+    priv=ALL
+    state=present

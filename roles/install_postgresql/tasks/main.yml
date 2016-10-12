@@ -1,0 +1,6 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- include: ubuntu.yml

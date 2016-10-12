@@ -1,0 +1,16 @@
+---
+# Postgresql settings
+postgresql_version: 9.4
+postgresql_graphite_db_name: graphite
+postgresql_grafana_db_name: grafana
+
+postgresql_db_user_name: graphite
+postgresql_db_password: changemeplease
+
+# Graphite settings
+time_zone: Europe/Warsaw
+
+# Grafana settings
+grafana_admin_user: admin
+grafana_admin_password: admin
+grafana_secret_key: SW523Ycw3TIb9zpOOh2oP4sMm

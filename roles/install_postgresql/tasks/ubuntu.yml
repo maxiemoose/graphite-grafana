@@ -1,0 +1,32 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: Add PostgreSQL apt key
+  apt_key:
+    url=https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state=present
+
+- name: Add PostgreSQL apt repo
+  apt_repository:
+    repo='deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
+    state=present
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "14.04"
+
+- name: Add PostgreSQL apt repo
+  apt_repository:
+    repo='deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main'
+    state=present
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "16.04"
+
+- name: Install PostgreSQL
+  apt: name={{ item }} state=present
+  with_items:
+    - postgresql-{{ postgresql_version }}
+    - postgresql-client-{{ postgresql_version }}
+    - python-psycopg2
+    - libpq-dev
+
+- name: make sure that postgresql service is running
+  service: name=postgresql state=started

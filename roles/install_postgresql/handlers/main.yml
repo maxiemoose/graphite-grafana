@@ -1,0 +1,10 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: reload postgresql-9.4
+  service: name=postgresql-9.4 state=reloaded
+
+- name: restart postgresql-9.4
+  service: name=postgresql-9.4 state=restarted

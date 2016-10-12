@@ -1,0 +1,42 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: install deps
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - build-essential
+    - graphite-web
+    - graphite-carbon
+    - python-dev
+    - libpq-dev
+    - python-pip
+    - python-psycopg2
+  when:
+    ansible_distribution == 'Ubuntu'
+
+- name: copy default aggregation configuration
+  copy:
+    src=/usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example
+    dest=/etc/carbon/storage-aggregation.conf
+    owner=root
+    group=root
+    mode=0644
+    remote_src=true
+  when:
+    ansible_distribution == 'Ubuntu'
+
+- name: enable carbon's cache
+  lineinfile:
+    dest=/etc/default/graphite-carbon
+    regexp=^CARBON_CACHE_ENABLED=false
+    line=CARBON_CACHE_ENABLED=true
+  when:
+    ansible_distribution == 'Ubuntu'
+  notify:
+  - restart carbon-cache
+
+- name: make sure that carbon-cache process is enabled
+  service: name=carbon-cache enabled=yes
+

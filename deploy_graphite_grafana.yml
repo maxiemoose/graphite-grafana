@@ -1,0 +1,11 @@
+---
+- hosts: all-nodes
+  roles:
+    - install_graphite
+    - install_grafana
+    - install_postgresql
+    - install_apache2
+    - configure_apache2
+    - configure_postgresql
+    - configure_graphite
+    - configure_grafana
