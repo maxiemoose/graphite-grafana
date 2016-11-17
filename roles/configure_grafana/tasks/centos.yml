@@ -1,0 +1,39 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: upload grafana.ini file
+  template:
+    src=grafana.ini.j2
+    dest=/etc/grafana/grafana.ini
+    owner=root
+    group=root
+    mode=0644
+    backup=yes
+  notify:
+  - restart grafana-server
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: upload grafana apache2 config file
+  template:
+    src=apache2-grafana.conf.j2
+    dest=/etc/apache2/sites-available/apache2-grafana.conf
+    owner=root
+    group=root
+    mode=0644
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: enable apache2-grafana config
+  shell: a2ensite apache2-grafana
+  notify:
+  - reload apache2
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: make sure that grafana-server process is running
+  service: name=grafana-server state=started enabled=yes
+  when:
+    ansible_distribution == 'CentOS'

@@ -4,3 +4,4 @@
 
 ---
 - include: ubuntu.yml
+- include: centos.yml

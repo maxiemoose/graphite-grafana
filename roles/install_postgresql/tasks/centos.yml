@@ -1,0 +1,17 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: Install PostgreSQL
+  yum: name={{ item }} state=present
+  with_items:
+    - postgresql-server
+    - postgresql-contrib
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: make sure that postgresql service is running
+  service: name=postgresql state=started
+  when:
+    ansible_distribution == 'CentOS'

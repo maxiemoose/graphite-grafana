@@ -15,7 +15,7 @@
   when:
     ansible_distribution == 'Ubuntu'
 
-- name: install graphite
+- name: install grafana
   apt: name=grafana state=present
   when:
     ansible_distribution == 'Ubuntu'

@@ -1,0 +1,58 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: install pip
+  yum: name={{ item }} state=present update_cache=yes
+  with_items:
+    - epel-release
+#    - http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+#    - python-pip
+#    - python-wheel
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: install development headers
+  yum: name={{ item }} state=present update_cache=yes
+  with_items:
+    - python-devel
+    - cairo-devel
+    - libffi-devel
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: install carbon via pip
+  pip: name={{ item }}
+  with_items:
+    - carbon
+    - graphite-web
+    - https://github.com/graphite-project/ceres/tarball/master
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: enable carbon's cache
+  lineinfile:
+    dest=/etc/default/graphite-carbon
+    regexp=^CARBON_CACHE_ENABLED=false
+    line=CARBON_CACHE_ENABLED=true
+  when:
+    ansible_distribution == 'CentOS'
+  notify:
+  - restart carbon-cache
+
+- name: copy default aggregation configuration
+  copy:
+    src=/usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example
+    dest=/etc/carbon/storage-aggregation.conf
+    owner=root
+    group=root
+    mode=0644
+    remote_src=true
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: make sure that carbon-cache process is enabled
+  service: name=carbon-cache enabled=yes
+  when:
+    ansible_distribution == 'CentOS'

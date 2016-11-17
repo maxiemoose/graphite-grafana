@@ -1,0 +1,15 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: add grafana repo
+  copy:
+    src=grafana.repo
+    dest=/etc/yum.repos/grafana.repo
+  ansible_distribution == 'CentOS'
+
+- name: install grafana
+  yum: name=grafana state=present
+  when:
+    ansible_distribution == 'CentOS'

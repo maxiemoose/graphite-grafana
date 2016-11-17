@@ -1,0 +1,12 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: install apache2
+  yum: name={{ item }} state=present
+  with_items:
+    - httpd
+    - mod-wsgi
+  when:
+    ansible_distribution == 'CentOS'

@@ -1,0 +1,45 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: upload local_settings.py file
+  template:
+    src=local_settings.py.j2
+    dest=/etc/graphite/local_settings.py
+    owner=root
+    group=root
+    mode=0644
+    backup=yes
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: install python module
+  pip: name=pexpect
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: initialize the database
+  expect:
+    command: graphite-manage syncdb
+    responses:
+      Would you like to create one now? (yes/no): "no"
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: upload graphite apache2 config file
+  template:
+    src=apache2-graphite.conf.j2
+    dest=/etc/apache2/sites-available/apache2-graphite.conf
+    owner=root
+    group=root
+    mode=0644
+  when:
+    ansible_distribution == 'CentOS'
+
+- name: enable apache2-graphite config
+  shell: a2ensite apache2-graphite
+  notify:
+  - reload apache2
+  when:
+    ansible_distribution == 'CentOS'

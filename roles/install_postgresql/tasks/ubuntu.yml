@@ -7,6 +7,8 @@
   apt_key:
     url=https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state=present
+  when:
+    ansible_distribution == 'CentOS'
 
 - name: Add PostgreSQL apt repo
   apt_repository:
@@ -27,6 +29,10 @@
     - postgresql-client-{{ postgresql_version }}
     - python-psycopg2
     - libpq-dev
+  when:
+    ansible_distribution == 'CentOS'
 
 - name: make sure that postgresql service is running
   service: name=postgresql state=started
+  when:
+    ansible_distribution == 'CentOS'

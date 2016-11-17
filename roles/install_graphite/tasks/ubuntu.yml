@@ -39,4 +39,5 @@
 
 - name: make sure that carbon-cache process is enabled
   service: name=carbon-cache enabled=yes
-
+  when:
+    ansible_distribution == 'Ubuntu'

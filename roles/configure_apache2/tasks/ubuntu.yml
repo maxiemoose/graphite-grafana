@@ -1,0 +1,26 @@
+##
+## author: Michal Tomczuk <michal.tomczuk@zerodowntime.pl>
+##
+
+---
+- name: enable modules
+  apache2_module: name={{ item }} state=present
+  with_items:
+    - proxy
+    - proxy_http
+    - xml2enc
+  when:
+    ansible_distribution == 'Ubuntu'
+
+- name: add line apach2 config file
+  lineinfile:
+    dest=/etc/apache2/ports.conf
+    insertbefore="^Listen 80"
+    line="Listen 8080"
+  when:
+    ansible_distribution == 'Ubuntu'
+
+- name: disable 000-default config
+  shell: a2dissite 000-default
+  when:
+    ansible_distribution == 'Ubuntu'
